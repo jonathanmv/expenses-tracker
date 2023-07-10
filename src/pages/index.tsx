@@ -61,11 +61,12 @@ function AuthShowcase() {
     undefined, // no input
     { enabled: sessionData?.user !== undefined }
   );
+  const { data: greeting } = api.user.greet.useQuery();
 
   return (
     <div className="flex flex-col items-center justify-center gap-4">
       <p className="text-center text-2xl text-white">
-        {sessionData && <span>Logged in as {sessionData.user?.name}</span>}
+        {greeting && <span>{greeting.greeting}</span>}
         {secretMessage && <span> - {secretMessage}</span>}
       </p>
       <button
