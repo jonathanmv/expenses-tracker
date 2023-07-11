@@ -1,62 +1,56 @@
 import {
-  ActionIcon,
-  AppShell,
-  Group,
-  Header,
-  Navbar,
-  useMantineColorScheme,
+  Button,
+  Center,
+  Container,
+  NumberInput,
+  Paper,
+  TextInput,
 } from "@mantine/core";
-import { IconSun, IconMoonStars } from "@tabler/icons-react";
-import { Logo } from "./_logo";
-import { MainLinks } from "./_mainLinks";
-import { User } from "./_user";
+import { useForm } from "@mantine/form";
 
-export default function AddExpensePage() {
-  // eslint-disable-next-line @typescript-eslint/unbound-method
-  const { colorScheme, toggleColorScheme } = useMantineColorScheme();
+type AddExpenseFormValues = {
+  amount: number;
+  description?: string;
+};
+
+export default function AddExpenseForm() {
+  const form = useForm<AddExpenseFormValues>({
+    initialValues: { amount: 0 },
+    validate: {
+      amount: (value) => (value > 0 ? null : "Amount must be greater than 0"),
+    },
+  });
+
+  const handleSubmit = (
+    values: AddExpenseFormValues,
+    event: React.FormEvent<HTMLFormElement>
+  ) => {
+    event.preventDefault();
+    console.log(values);
+  };
 
   return (
-    <AppShell
-      padding="md"
-      fixed={false}
-      navbar={
-        <Navbar width={{ base: 300 }} height={500} p="xs">
-          <Navbar.Section grow mt="xs">
-            <MainLinks />
-          </Navbar.Section>
-          <Navbar.Section>
-            <User />
-          </Navbar.Section>
-        </Navbar>
-      }
-      header={
-        <Header height={60}>
-          <Group sx={{ height: "100%" }} px={20} position="apart">
-            <Logo colorScheme={colorScheme} />
-            <ActionIcon
-              variant="default"
-              onClick={() => toggleColorScheme()}
-              size={30}
-            >
-              {colorScheme === "dark" ? (
-                <IconSun size="1rem" />
-              ) : (
-                <IconMoonStars size="1rem" />
-              )}
-            </ActionIcon>
-          </Group>
-        </Header>
-      }
-      styles={(theme) => ({
-        main: {
-          backgroundColor:
-            theme.colorScheme === "dark"
-              ? theme.colors.dark[8]
-              : theme.colors.gray[0],
-        },
-      })}
-    >
-      Your application goes here
-    </AppShell>
+    <Center maw={400} h="100%" mx="auto">
+      <form onSubmit={form.onSubmit(handleSubmit)}>
+        <Paper shadow="xs" p="lg" w="100%">
+          <NumberInput
+            label="Amount spent"
+            {...form.getInputProps("amount")}
+            min={0}
+            precision={2}
+          />
+          <TextInput
+            label="Description"
+            description="(optional) e.g. Groceries"
+            placeholder="e.g. Groceries"
+            {...form.getInputProps("description")}
+          />
+          <Container mt="md" />
+          <Button type="submit" variant="light" fullWidth>
+            Add expense
+          </Button>
+        </Paper>
+      </form>
+    </Center>
   );
 }

@@ -19,7 +19,7 @@ const MyApp: AppType<{ session: Session | null }> = ({
   return (
     <>
       <Head>
-        <title>Page title</title>
+        <title>Expenses Tracker</title>
         <link rel="icon" href="/favicon.ico" />
         <meta
           name="viewport"
