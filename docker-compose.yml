@@ -24,10 +24,6 @@ services:
   adminer:
     image: adminer
     restart: always
-    environment:
-      - MYSQL_DATABASE='expenses-tracker-local'
-      - MYSQL_USERNAME='user'
-      - MYSQL_PASSWORD='password'
     ports:
       - 8080:8080
 
