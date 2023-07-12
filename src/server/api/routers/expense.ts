@@ -24,4 +24,12 @@ export const expenseRouter = createTRPCRouter({
         },
       });
     }),
+  list: protectedProcedure.query(({ ctx }) => {
+    const { user } = ctx.session;
+    return ctx.prisma.expense.findMany({
+      where: {
+        userId: user.id,
+      },
+    });
+  }),
 });
