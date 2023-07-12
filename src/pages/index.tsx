@@ -1,7 +1,7 @@
+import { api } from "@/utils/api";
 import { signIn, signOut, useSession } from "next-auth/react";
 import Head from "next/head";
 import Link from "next/link";
-import { api } from "@/utils/api";
 
 export default function Home() {
   const hello = api.example.hello.useQuery({ text: "from tRPC" });
@@ -61,14 +61,23 @@ function AuthShowcase() {
     undefined, // no input
     { enabled: sessionData?.user !== undefined }
   );
-  const { data: greeting } = api.user.greet.useQuery();
+
+  const { data: profile } = api.user.getProfile.useQuery();
 
   return (
     <div className="flex flex-col items-center justify-center gap-4">
       <p className="text-center text-2xl text-white">
-        {greeting && <span>{greeting.greeting}</span>}
+        {profile && <span>{profile.name || profile.email}</span>}
         {secretMessage && <span> - {secretMessage}</span>}
       </p>
+
+      {profile && (
+        <Link href="/profile/update">
+          <button className="rounded-full bg-white/10 px-10 py-3 font-semibold text-white no-underline transition hover:bg-white/20">
+            Update profile
+          </button>
+        </Link>
+      )}
       <button
         className="rounded-full bg-white/10 px-10 py-3 font-semibold text-white no-underline transition hover:bg-white/20"
         onClick={sessionData ? () => void signOut() : () => void signIn()}
