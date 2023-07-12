@@ -1,3 +1,4 @@
+import { api } from "@/utils/api";
 import {
   Button,
   Center,
@@ -15,9 +16,16 @@ type AddExpenseFormValues = {
 
 export default function AddExpenseForm() {
   const form = useForm<AddExpenseFormValues>({
-    initialValues: { amount: 0 },
+    initialValues: { amount: 0, description: "" },
     validate: {
       amount: (value) => (value > 0 ? null : "Amount must be greater than 0"),
+    },
+  });
+
+  const addExpense = api.expense.add.useMutation({
+    onSuccess: () => {
+      form.reset();
+      alert("Expense added!");
     },
   });
 
@@ -26,7 +34,7 @@ export default function AddExpenseForm() {
     event: React.FormEvent<HTMLFormElement>
   ) => {
     event.preventDefault();
-    console.log(values);
+    addExpense.mutate(values);
   };
 
   return (
