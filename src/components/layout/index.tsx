@@ -6,41 +6,20 @@ import {
   type ColorScheme,
 } from "@mantine/core";
 import { useColorScheme, useViewportSize } from "@mantine/hooks";
+import { useSession } from "next-auth/react";
 import { useState } from "react";
 import { Brand } from "./_brand";
 import { MainLinks } from "./_mainLinks";
 import { User } from "./_user";
 
 export default function Layout({ children }: { children: React.ReactNode }) {
-  const { height } = useViewportSize();
+  const { data: session } = useSession();
+
+  const Layout = session?.user ? LoggedInLayout : NotLoggedInLayout;
 
   return (
     <UI>
-      <AppShell
-        padding="md"
-        fixed={false}
-        navbar={
-          <Navbar width={{ base: 300 }} height={height - 60} p="xs">
-            <Navbar.Section grow mt="xs">
-              <MainLinks />
-            </Navbar.Section>
-            <Navbar.Section>
-              <User />
-            </Navbar.Section>
-          </Navbar>
-        }
-        header={<Brand />}
-        styles={(theme) => ({
-          main: {
-            backgroundColor:
-              theme.colorScheme === "dark"
-                ? theme.colors.dark[8]
-                : theme.colors.gray[0],
-          },
-        })}
-      >
-        {children}
-      </AppShell>
+      <Layout>{children}</Layout>
     </UI>
   );
 }
@@ -67,5 +46,60 @@ const UI: React.FC<{ children: React.ReactNode }> = ({ children }) => {
         {children}
       </MantineProvider>
     </ColorSchemeProvider>
+  );
+};
+
+const LoggedInLayout: React.FC<{ children: React.ReactNode }> = ({
+  children,
+}) => {
+  const { height } = useViewportSize();
+  return (
+    <AppShell
+      padding="md"
+      fixed={false}
+      navbar={
+        <Navbar width={{ base: 300 }} height={height - 60} p="xs">
+          <Navbar.Section grow mt="xs">
+            <MainLinks />
+          </Navbar.Section>
+          <Navbar.Section>
+            <User />
+          </Navbar.Section>
+        </Navbar>
+      }
+      header={<Brand />}
+      styles={(theme) => ({
+        main: {
+          backgroundColor:
+            theme.colorScheme === "dark"
+              ? theme.colors.dark[8]
+              : theme.colors.gray[0],
+        },
+      })}
+    >
+      {children}
+    </AppShell>
+  );
+};
+
+const NotLoggedInLayout: React.FC<{ children: React.ReactNode }> = ({
+  children,
+}) => {
+  return (
+    <AppShell
+      padding="md"
+      fixed={false}
+      header={<Brand />}
+      styles={(theme) => ({
+        main: {
+          backgroundColor:
+            theme.colorScheme === "dark"
+              ? theme.colors.dark[8]
+              : theme.colors.gray[0],
+        },
+      })}
+    >
+      {children}
+    </AppShell>
   );
 };

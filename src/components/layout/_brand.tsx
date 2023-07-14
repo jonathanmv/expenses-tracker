@@ -1,12 +1,11 @@
-import React from "react";
 import {
-  Group,
   ActionIcon,
-  useMantineColorScheme,
+  Group,
   Header,
+  Text,
+  useMantineColorScheme,
 } from "@mantine/core";
-import { IconSun, IconMoonStars } from "@tabler/icons-react";
-import { Logo } from "./_logo";
+import { IconMoonStars, IconSun } from "@tabler/icons-react";
 
 export function Brand() {
   // eslint-disable-next-line @typescript-eslint/unbound-method
@@ -15,7 +14,7 @@ export function Brand() {
   return (
     <Header height={60}>
       <Group sx={{ height: "100%" }} px={20} position="apart">
-        <Logo colorScheme={colorScheme} />
+        <Text fw="bold">Expenses Tracker</Text>
         <ActionIcon
           variant="default"
           onClick={() => toggleColorScheme()}

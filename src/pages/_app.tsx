@@ -20,11 +20,11 @@ const MyApp: AppType<{ session: Session | null }> = ({
           content="minimum-scale=1, initial-scale=1, width=device-width"
         />
       </Head>
-      <Layout>
-        <SessionProvider session={session}>
+      <SessionProvider session={session}>
+        <Layout>
           <Component {...pageProps} />
-        </SessionProvider>
-      </Layout>
+        </Layout>
+      </SessionProvider>
     </>
   );
 };
