@@ -1,17 +1,21 @@
-import React from "react";
-import { IconChevronRight, IconChevronLeft } from "@tabler/icons-react";
 import {
-  UnstyledButton,
-  Group,
   Avatar,
-  Text,
   Box,
-  useMantineTheme,
+  Group,
+  Text,
+  UnstyledButton,
   rem,
+  useMantineTheme,
 } from "@mantine/core";
+import { IconChevronLeft, IconChevronRight } from "@tabler/icons-react";
+import { useSession } from "next-auth/react";
+import Link from "next/link";
 
 export function User() {
   const theme = useMantineTheme();
+  const { data: session } = useSession();
+  if (!session?.user) return null;
+  const { name, email, image } = session.user;
 
   return (
     <Box
@@ -24,44 +28,43 @@ export function User() {
         }`,
       }}
     >
-      <UnstyledButton
-        sx={{
-          display: "block",
-          width: "100%",
-          padding: theme.spacing.xs,
-          borderRadius: theme.radius.sm,
-          color:
-            theme.colorScheme === "dark" ? theme.colors.dark[0] : theme.black,
+      <Link href="/profile">
+        <UnstyledButton
+          sx={{
+            display: "block",
+            width: "100%",
+            padding: theme.spacing.xs,
+            borderRadius: theme.radius.sm,
+            color:
+              theme.colorScheme === "dark" ? theme.colors.dark[0] : theme.black,
 
-          "&:hover": {
-            backgroundColor:
-              theme.colorScheme === "dark"
-                ? theme.colors.dark[6]
-                : theme.colors.gray[0],
-          },
-        }}
-      >
-        <Group>
-          <Avatar
-            src="https://images.unsplash.com/photo-1508214751196-bcfd4ca60f91?ixid=MXwxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHw%3D&ixlib=rb-1.2.1&auto=format&fit=crop&w=255&q=80"
-            radius="xl"
-          />
-          <Box sx={{ flex: 1 }}>
-            <Text size="sm" weight={500}>
-              Amy Horsefighter
-            </Text>
-            <Text color="dimmed" size="xs">
-              ahorsefighter@gmail.com
-            </Text>
-          </Box>
+            "&:hover": {
+              backgroundColor:
+                theme.colorScheme === "dark"
+                  ? theme.colors.dark[6]
+                  : theme.colors.gray[0],
+            },
+          }}
+        >
+          <Group>
+            <Avatar src={image} radius="xl" />
+            <Box sx={{ flex: 1 }}>
+              <Text size="sm" weight={500}>
+                {name}
+              </Text>
+              <Text color="dimmed" size="xs">
+                {email}
+              </Text>
+            </Box>
 
-          {theme.dir === "ltr" ? (
-            <IconChevronRight size={rem(18)} />
-          ) : (
-            <IconChevronLeft size={rem(18)} />
-          )}
-        </Group>
-      </UnstyledButton>
+            {theme.dir === "ltr" ? (
+              <IconChevronRight size={rem(18)} />
+            ) : (
+              <IconChevronLeft size={rem(18)} />
+            )}
+          </Group>
+        </UnstyledButton>
+      </Link>
     </Box>
   );
 }

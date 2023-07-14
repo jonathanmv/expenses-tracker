@@ -5,7 +5,7 @@ import {
   Navbar,
   type ColorScheme,
 } from "@mantine/core";
-import { useColorScheme, useViewportSize } from "@mantine/hooks";
+import { useColorScheme } from "@mantine/hooks";
 import { useSession } from "next-auth/react";
 import { useState } from "react";
 import { Brand } from "./_brand";
@@ -52,13 +52,15 @@ const UI: React.FC<{ children: React.ReactNode }> = ({ children }) => {
 const LoggedInLayout: React.FC<{ children: React.ReactNode }> = ({
   children,
 }) => {
-  const { height } = useViewportSize();
+  const { data: session } = useSession();
+  if (!session?.user) return null;
+
   return (
     <AppShell
       padding="md"
       fixed={false}
       navbar={
-        <Navbar width={{ base: 300 }} height={height - 60} p="xs">
+        <Navbar width={{ base: 300 }} p="xs">
           <Navbar.Section grow mt="xs">
             <MainLinks />
           </Navbar.Section>

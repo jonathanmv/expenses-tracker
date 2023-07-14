@@ -5,12 +5,9 @@ import {
   Flex,
   NumberInput,
   Paper,
-  Text,
   TextInput,
-  Timeline,
 } from "@mantine/core";
 import { useForm } from "@mantine/form";
-import { IconGitBranch } from "@tabler/icons-react";
 
 type AddExpenseFormValues = {
   amount: number;
@@ -25,7 +22,6 @@ export default function AddExpenseForm() {
     },
   });
 
-  const { data: expenses } = api.expense.list.useQuery();
   const addExpense = api.expense.add.useMutation({
     onSuccess: () => {
       form.reset();
@@ -70,23 +66,6 @@ export default function AddExpenseForm() {
           </Button>
         </Paper>
       </form>
-
-      <Timeline active={1} bulletSize={24} lineWidth={2}>
-        {expenses?.map((expense) => (
-          <Timeline.Item
-            key={expense.id}
-            bullet={<IconGitBranch size={12} />}
-            title={expense.amount}
-          >
-            <Text color="dimmed" size="sm">
-              {expense.description || "No description"}
-            </Text>
-            <Text size="xs" mt={4}>
-              {new Date(expense.createdAt).toLocaleString()}
-            </Text>
-          </Timeline.Item>
-        ))}
-      </Timeline>
     </Flex>
   );
 }

@@ -1,61 +1,58 @@
+import { Group, Text, ThemeIcon, UnstyledButton } from "@mantine/core";
+import { IconCirclePlus, IconListNumbers } from "@tabler/icons-react";
+import Link from "next/link";
 import React from "react";
-import {
-  IconGitPullRequest,
-  IconAlertCircle,
-  IconMessages,
-  IconDatabase,
-} from "@tabler/icons-react";
-import { ThemeIcon, UnstyledButton, Group, Text } from "@mantine/core";
 
 interface MainLinkProps {
   icon: React.ReactNode;
   color: string;
   label: string;
+  href: string;
 }
 
-function MainLink({ icon, color, label }: MainLinkProps) {
+function MainLink({ icon, color, label, href }: MainLinkProps) {
   return (
-    <UnstyledButton
-      sx={(theme) => ({
-        display: "block",
-        width: "100%",
-        padding: theme.spacing.xs,
-        borderRadius: theme.radius.sm,
-        color:
-          theme.colorScheme === "dark" ? theme.colors.dark[0] : theme.black,
+    <Link href={href}>
+      <UnstyledButton
+        sx={(theme) => ({
+          display: "block",
+          width: "100%",
+          padding: theme.spacing.xs,
+          borderRadius: theme.radius.sm,
+          color:
+            theme.colorScheme === "dark" ? theme.colors.dark[0] : theme.black,
 
-        "&:hover": {
-          backgroundColor:
-            theme.colorScheme === "dark"
-              ? theme.colors.dark[6]
-              : theme.colors.gray[0],
-        },
-      })}
-    >
-      <Group>
-        <ThemeIcon color={color} variant="light">
-          {icon}
-        </ThemeIcon>
+          "&:hover": {
+            backgroundColor:
+              theme.colorScheme === "dark"
+                ? theme.colors.dark[6]
+                : theme.colors.gray[0],
+          },
+        })}
+      >
+        <Group>
+          <ThemeIcon color={color}>{icon}</ThemeIcon>
 
-        <Text size="sm">{label}</Text>
-      </Group>
-    </UnstyledButton>
+          <Text size="sm">{label}</Text>
+        </Group>
+      </UnstyledButton>
+    </Link>
   );
 }
 
 const data = [
   {
-    icon: <IconGitPullRequest size="1rem" />,
-    color: "blue",
-    label: "Pull Requests",
+    icon: <IconCirclePlus size="1rem" />,
+    color: "lime.6",
+    label: "Add Expense",
+    href: "/expenses/add",
   },
   {
-    icon: <IconAlertCircle size="1rem" />,
-    color: "teal",
-    label: "Open Issues",
+    icon: <IconListNumbers size="1rem" />,
+    color: "blue.6",
+    label: "Expenses",
+    href: "/expenses",
   },
-  { icon: <IconMessages size="1rem" />, color: "violet", label: "Discussions" },
-  { icon: <IconDatabase size="1rem" />, color: "grape", label: "Databases" },
 ];
 
 export function MainLinks() {

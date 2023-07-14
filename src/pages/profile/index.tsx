@@ -1,7 +1,6 @@
 import { api } from "@/utils/api";
 import { Button, Center, Container, Paper, TextInput } from "@mantine/core";
 import { useForm } from "@mantine/form";
-import Link from "next/link";
 import { useEffect } from "react";
 
 type UpdateProfileFormValues = {
@@ -56,11 +55,6 @@ export default function UpdateProfiles() {
           <Button type="submit" variant="outline" fullWidth>
             Update profile
           </Button>
-          <Link href="/">
-            <Button type="submit" variant="white" color="gray" fullWidth>
-              Go Home
-            </Button>
-          </Link>
         </Paper>
       </form>
     </Center>
