@@ -1,20 +1,40 @@
 import { api } from "@/utils/api";
 import {
   Button,
-  Container,
-  Flex,
   NumberInput,
-  Paper,
+  Space,
+  Stack,
   TextInput,
+  Title,
 } from "@mantine/core";
 import { useForm } from "@mantine/form";
+import Link from "next/link";
 
 type AddExpenseFormValues = {
   amount: number;
   description?: string;
 };
 
-export default function AddExpenseForm() {
+export default function AddExpense() {
+  return (
+    <Stack spacing="xl" justify="flex-start">
+      <AddExpenseForm />
+      <CancelButton />
+    </Stack>
+  );
+}
+
+function CancelButton() {
+  return (
+    <Link href="/">
+      <Button variant="light" fullWidth>
+        Cancel
+      </Button>
+    </Link>
+  );
+}
+
+function AddExpenseForm() {
   const form = useForm<AddExpenseFormValues>({
     initialValues: { amount: 0, description: "" },
     validate: {
@@ -38,34 +58,27 @@ export default function AddExpenseForm() {
   };
 
   return (
-    <Flex
-      mih={50}
-      gap="md"
-      justify="flex-start"
-      align="center"
-      direction="column"
-      wrap="wrap"
-    >
-      <form onSubmit={form.onSubmit(handleSubmit)}>
-        <Paper shadow="xs" p="lg" w="100%">
-          <NumberInput
-            label="Amount spent"
-            {...form.getInputProps("amount")}
-            min={0}
-            precision={2}
-          />
-          <TextInput
-            label="Description"
-            description="(optional) e.g. Groceries"
-            placeholder="e.g. Groceries"
-            {...form.getInputProps("description")}
-          />
-          <Container mt="md" />
-          <Button type="submit" variant="light" fullWidth>
-            Add expense
-          </Button>
-        </Paper>
-      </form>
-    </Flex>
+    <form onSubmit={form.onSubmit(handleSubmit)}>
+      <Stack spacing="lg">
+        <Title>Add Expense</Title>
+        <NumberInput
+          label="Amount spent"
+          {...form.getInputProps("amount")}
+          min={0}
+          precision={2}
+          autoFocus
+        />
+        <TextInput
+          label="Description"
+          description="(optional) e.g. Groceries"
+          placeholder="e.g. Groceries"
+          {...form.getInputProps("description")}
+        />
+        <Space />
+        <Button type="submit" variant="outline" fullWidth>
+          Add Expense
+        </Button>
+      </Stack>
+    </form>
   );
 }

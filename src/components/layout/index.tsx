@@ -1,16 +1,19 @@
 import {
+  ActionIcon,
   AppShell,
   ColorSchemeProvider,
+  Group,
+  Header,
   MantineProvider,
-  Navbar,
+  Text,
   type ColorScheme,
 } from "@mantine/core";
 import { useColorScheme } from "@mantine/hooks";
+import { IconSettings, IconX } from "@tabler/icons-react";
 import { useSession } from "next-auth/react";
+import Link from "next/link";
+import { useRouter } from "next/router";
 import { useState } from "react";
-import { Brand } from "./_brand";
-import { MainLinks } from "./_mainLinks";
-import { User } from "./_user";
 
 export default function Layout({ children }: { children: React.ReactNode }) {
   const { data: session } = useSession();
@@ -53,23 +56,30 @@ const LoggedInLayout: React.FC<{ children: React.ReactNode }> = ({
   children,
 }) => {
   const { data: session } = useSession();
+  const { pathname } = useRouter();
+  const topHref = pathname == "/profile" ? "/" : "/profile";
   if (!session?.user) return null;
 
   return (
     <AppShell
       padding="md"
-      fixed={false}
-      navbar={
-        <Navbar width={{ base: 300 }} p="xs">
-          <Navbar.Section grow mt="xs">
-            <MainLinks />
-          </Navbar.Section>
-          <Navbar.Section>
-            <User />
-          </Navbar.Section>
-        </Navbar>
+      header={
+        <Header height={{ base: 60, md: 70 }} p="md">
+          <Group position="apart">
+            <Text>Expenses Tracker</Text>
+
+            <Link href={topHref}>
+              <ActionIcon>
+                {pathname == "/profile" ? (
+                  <IconX size="1.25rem" />
+                ) : (
+                  <IconSettings size="1.25rem" />
+                )}
+              </ActionIcon>
+            </Link>
+          </Group>
+        </Header>
       }
-      header={<Brand />}
       styles={(theme) => ({
         main: {
           backgroundColor:
@@ -90,8 +100,6 @@ const NotLoggedInLayout: React.FC<{ children: React.ReactNode }> = ({
   return (
     <AppShell
       padding="md"
-      fixed={false}
-      header={<Brand />}
       styles={(theme) => ({
         main: {
           backgroundColor:

@@ -1,5 +1,12 @@
-import { Group, Text, ThemeIcon, UnstyledButton } from "@mantine/core";
-import { IconCirclePlus, IconListNumbers } from "@tabler/icons-react";
+import {
+  Center,
+  SimpleGrid,
+  Space,
+  Text,
+  ThemeIcon,
+  UnstyledButton,
+} from "@mantine/core";
+import { IconCirclePlus } from "@tabler/icons-react";
 import Link from "next/link";
 import React from "react";
 
@@ -21,7 +28,10 @@ function MainLink({ icon, color, label, href }: MainLinkProps) {
           borderRadius: theme.radius.sm,
           color:
             theme.colorScheme === "dark" ? theme.colors.dark[0] : theme.black,
-
+          backgroundColor:
+            theme.colorScheme === "dark"
+              ? theme.colors.dark[9]
+              : theme.colors.blue[3],
           "&:hover": {
             backgroundColor:
               theme.colorScheme === "dark"
@@ -30,11 +40,11 @@ function MainLink({ icon, color, label, href }: MainLinkProps) {
           },
         })}
       >
-        <Group>
+        <Center>
           <ThemeIcon color={color}>{icon}</ThemeIcon>
-
+          <Space w={8} />
           <Text size="sm">{label}</Text>
-        </Group>
+        </Center>
       </UnstyledButton>
     </Link>
   );
@@ -47,15 +57,15 @@ const data = [
     label: "Add Expense",
     href: "/expenses/add",
   },
-  {
-    icon: <IconListNumbers size="1rem" />,
-    color: "blue.6",
-    label: "Expenses",
-    href: "/expenses",
-  },
+  // {
+  //   icon: <IconListNumbers size="1rem" />,
+  //   color: "blue.6",
+  //   label: "Expenses",
+  //   href: "/expenses",
+  // },
 ];
 
 export function MainLinks() {
   const links = data.map((link) => <MainLink {...link} key={link.label} />);
-  return <div>{links}</div>;
+  return <SimpleGrid cols={links.length}>{links}</SimpleGrid>;
 }

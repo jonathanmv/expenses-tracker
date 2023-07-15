@@ -1,85 +1,79 @@
 import { api } from "@/utils/api";
-import { signIn, signOut, useSession } from "next-auth/react";
+import { Button, Stack, Text, Timeline, Title } from "@mantine/core";
+import { IconPlus } from "@tabler/icons-react";
+import { signIn, useSession } from "next-auth/react";
 import Link from "next/link";
 
 export default function Home() {
+  const { data: session } = useSession();
+  if (session?.user) return <LoggedInHome />;
+
+  return <NotLoggedInHome />;
+}
+
+function LoggedInHome() {
   return (
-    <>
-      <main className="flex min-h-screen flex-col items-center justify-center bg-gradient-to-b from-[#2e026d] to-[#15162c]">
-        <div className="container flex flex-col items-center justify-center gap-12 px-4 py-16 ">
-          <h1 className="text-5xl font-extrabold tracking-tight text-white sm:text-[5rem]">
-            Create <span className="text-[hsl(280,100%,70%)]">T3</span> App
-          </h1>
-          <div className="grid grid-cols-1 gap-4 sm:grid-cols-2 md:gap-8">
-            <Link
-              className="flex max-w-xs flex-col gap-4 rounded-xl bg-white/10 p-4 text-white hover:bg-white/20"
-              href="https://create.t3.gg/en/usage/first-steps"
-              target="_blank"
-            >
-              <h3 className="text-2xl font-bold">First Steps →</h3>
-              <div className="text-lg">
-                Just the basics - Everything you need to know to set up your
-                database and authentication.
-              </div>
-            </Link>
-            <Link
-              className="flex max-w-xs flex-col gap-4 rounded-xl bg-white/10 p-4 text-white hover:bg-white/20"
-              href="https://create.t3.gg/en/introduction"
-              target="_blank"
-            >
-              <h3 className="text-2xl font-bold">Documentation →</h3>
-              <div className="text-lg">
-                Learn more about Create T3 App, the libraries it uses, and how
-                to deploy it.
-              </div>
-            </Link>
-          </div>
-          <div className="flex flex-col items-center gap-2">
-            <AuthShowcase />
-          </div>
-        </div>
-      </main>
-    </>
+    <Stack justify="space-between" h="100%">
+      <Stack spacing="xl">
+        <ExpensesTimeline />
+      </Stack>
+      <AddExpenseButton />
+    </Stack>
   );
 }
 
-function AuthShowcase() {
-  const { data: sessionData } = useSession();
-
-  const { data: secretMessage } = api.example.getSecretMessage.useQuery(
-    undefined, // no input
-    { enabled: sessionData?.user !== undefined }
+function NotLoggedInHome() {
+  return (
+    <Stack justify="space-between" h="100%">
+      <Stack spacing="xl">
+        <Title>Welcome to Expenses</Title>
+        <Text>
+          This is a simple expenses tracker app. You can add expenses and see
+          them in a timeline.
+        </Text>
+      </Stack>
+      <SignInButton />
+    </Stack>
   );
+}
 
-  const { data: profile } = api.user.getProfile.useQuery();
+function SignInButton() {
+  return (
+    <Button variant="outline" fullWidth onClick={() => void signIn()}>
+      Sign in with Email
+    </Button>
+  );
+}
+
+function AddExpenseButton() {
+  return (
+    <Link href="/expenses/add">
+      <Button variant="outline" leftIcon={<IconPlus size="1rem" />} fullWidth>
+        Add Expense
+      </Button>
+    </Link>
+  );
+}
+
+function ExpensesTimeline() {
+  const { data: expenses } = api.expense.list.useQuery();
 
   return (
-    <div className="flex flex-col items-center justify-center gap-4">
-      <p className="text-center text-2xl text-white">
-        {profile && <span>{profile.name || profile.email}</span>}
-        {secretMessage && <span> - {secretMessage}</span>}
-      </p>
-
-      {profile && (
-        <Link href="/profile/update">
-          <button className="rounded-full bg-white/10 px-10 py-3 font-semibold text-white no-underline transition hover:bg-white/20">
-            Update profile
-          </button>
-        </Link>
-      )}
-      {profile && (
-        <Link href="/expenses/add">
-          <button className="rounded-full bg-white/10 px-10 py-3 font-semibold text-white no-underline transition hover:bg-white/20">
-            Add Expense
-          </button>
-        </Link>
-      )}
-      <button
-        className="rounded-full bg-white/10 px-10 py-3 font-semibold text-white no-underline transition hover:bg-white/20"
-        onClick={sessionData ? () => void signOut() : () => void signIn()}
-      >
-        {sessionData ? "Sign out" : "Sign in"}
-      </button>
-    </div>
+    <Stack spacing="xl">
+      <Title>Timeline</Title>
+      <Timeline active={expenses?.length} bulletSize={16} lineWidth={1}>
+        {expenses?.map((expense) => (
+          <Timeline.Item
+            active
+            key={expense.id}
+            title={`€${expense.amount} ` + (expense.description || "...")}
+          >
+            <Text color="dimmed" size="sm">
+              {new Date(expense.createdAt).toLocaleString()}
+            </Text>
+          </Timeline.Item>
+        ))}
+      </Timeline>
+    </Stack>
   );
 }

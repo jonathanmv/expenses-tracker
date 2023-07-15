@@ -30,6 +30,9 @@ export const expenseRouter = createTRPCRouter({
       where: {
         userId: user.id,
       },
+      orderBy: {
+        createdAt: "desc",
+      },
     });
   }),
 });
