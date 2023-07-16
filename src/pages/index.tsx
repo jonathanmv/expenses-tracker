@@ -1,5 +1,14 @@
 import { api } from "@/utils/api";
-import { Button, Stack, Text, Timeline, Title } from "@mantine/core";
+import {
+  Affix,
+  Button,
+  Stack,
+  Text,
+  Timeline,
+  Title,
+  Transition,
+  rem,
+} from "@mantine/core";
 import { IconPlus } from "@tabler/icons-react";
 import { signIn, useSession } from "next-auth/react";
 import Link from "next/link";
@@ -14,9 +23,7 @@ export default function Home() {
 function LoggedInHome() {
   return (
     <Stack justify="space-between" h="100%">
-      <Stack spacing="xl">
-        <ExpensesTimeline />
-      </Stack>
+      <ExpensesTimeline />
       <AddExpenseButton />
     </Stack>
   );
@@ -47,11 +54,21 @@ function SignInButton() {
 
 function AddExpenseButton() {
   return (
-    <Link href="/expenses/add">
-      <Button variant="outline" leftIcon={<IconPlus size="1rem" />} fullWidth>
-        Add Expense
-      </Button>
-    </Link>
+    <Affix position={{ bottom: rem(20), right: rem(20) }}>
+      <Transition transition="slide-up" mounted={true}>
+        {(transitionStyles) => (
+          <Link href="/expenses/add">
+            <Button
+              style={transitionStyles}
+              variant="outline"
+              leftIcon={<IconPlus size="1rem" />}
+            >
+              Add Expense
+            </Button>
+          </Link>
+        )}
+      </Transition>
+    </Affix>
   );
 }
 
