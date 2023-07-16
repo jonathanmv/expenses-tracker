@@ -35,4 +35,19 @@ export const expenseRouter = createTRPCRouter({
       },
     });
   }),
+  /**
+   * THIS INCREASES OUR READS. Consider grouping in the client instead.
+   */
+  groupedByDate: protectedProcedure.query(({ ctx }) => {
+    const { user } = ctx.session;
+    const userId = user.id;
+    type ExpenseGroupedByDate = {
+      createdDate: Date;
+      amount: number;
+    };
+
+    return ctx.prisma.$queryRaw<
+      ExpenseGroupedByDate[]
+    >`SELECT DATE(createdAt) as createdDate, SUM(amount) as amount FROM Expense WHERE userId = ${userId} GROUP BY 1 ORDER BY createdDate DESC`;
+  }),
 });
