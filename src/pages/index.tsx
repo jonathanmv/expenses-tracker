@@ -108,7 +108,7 @@ function ExpensesTimeline() {
             key={group.createdDate.toISOString()}
             title={`${format(group.createdDate)} €${group.amount}`}
           >
-            <List>
+            <List spacing="sm">
               {expenses
                 ?.filter(
                   (expense) =>
@@ -116,9 +116,11 @@ function ExpensesTimeline() {
                 )
                 .map((expense) => (
                   <List.Item key={expense.createdAt.toISOString()}>
-                    <Text color="dimmed" size="sm">
-                      € {expense.amount} {expense.description}
-                    </Text>
+                    <Link href={`/expenses/${expense.id}`}>
+                      <Text color="dimmed" size="sm">
+                        € {expense.amount} {expense.description}
+                      </Text>
+                    </Link>
                   </List.Item>
                 ))}
             </List>

@@ -24,6 +24,34 @@ export const expenseRouter = createTRPCRouter({
         },
       });
     }),
+  update: protectedProcedure
+    .input(
+      z.object({
+        id: z.string(),
+        amount: z.number().min(0.01).max(1000000),
+        description: z.string().optional(),
+      })
+    )
+    .mutation(({ ctx, input }) => {
+      return ctx.prisma.expense.update({
+        where: {
+          id: input.id,
+        },
+        data: {
+          amount: input.amount,
+          description: input.description,
+        },
+      });
+    }),
+  get: protectedProcedure.input(z.string()).query(({ ctx, input }) => {
+    const { user } = ctx.session;
+    return ctx.prisma.expense.findFirst({
+      where: {
+        id: input,
+        userId: user.id,
+      },
+    });
+  }),
   list: protectedProcedure.query(({ ctx }) => {
     const { user } = ctx.session;
     return ctx.prisma.expense.findMany({
