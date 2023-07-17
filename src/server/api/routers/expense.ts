@@ -32,7 +32,25 @@ export const expenseRouter = createTRPCRouter({
         description: z.string().optional(),
       })
     )
-    .mutation(({ ctx, input }) => {
+    .mutation(async ({ ctx, input }) => {
+      const { user } = ctx.session;
+      /**
+       * I get an error trying to use `update` with the userId in the where clause.
+       * @see https://github.com/prisma/prisma/discussions/15726
+       *
+       * My problem is not solved by the workaround in the discussion.
+       * I'm querying by id and userId and updating the expense if found.
+       */
+      const expense = await ctx.prisma.expense.findFirst({
+        where: {
+          id: input.id,
+          userId: user.id,
+        },
+      });
+      if (!expense) {
+        return input;
+      }
+
       return ctx.prisma.expense.update({
         where: {
           id: input.id,
@@ -52,6 +70,33 @@ export const expenseRouter = createTRPCRouter({
       },
     });
   }),
+  delete: protectedProcedure
+    .input(z.string())
+    .mutation(async ({ ctx, input }) => {
+      const { user } = ctx.session;
+      /**
+       * I get an error trying to use `update` with the userId in the where clause.
+       * @see https://github.com/prisma/prisma/discussions/15726
+       *
+       * My problem is not solved by the workaround in the discussion.
+       * I'm querying by id and userId and updating the expense if found.
+       */
+      const expense = await ctx.prisma.expense.findFirst({
+        where: {
+          id: input,
+          userId: user.id,
+        },
+      });
+      if (!expense) {
+        return undefined;
+      }
+
+      return ctx.prisma.expense.delete({
+        where: {
+          id: input,
+        },
+      });
+    }),
   list: protectedProcedure.query(({ ctx }) => {
     const { user } = ctx.session;
     return ctx.prisma.expense.findMany({

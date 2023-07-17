@@ -17,15 +17,52 @@ type EditExpenseFormValues = {
   description?: string | null;
 };
 
+type EditExpenseProps = {
+  expense: EditExpenseFormValues;
+  onEdit: (values: EditExpenseFormValues) => void;
+  onDelete: (id: string) => void;
+};
+function stringOrNull(value: unknown): string | null {
+  if (typeof value !== "string") return null;
+  return value;
+}
+
 export default function EditExpense() {
   const router = useRouter();
-  if (typeof router.query.id !== "string") return null;
-  const { data: expense } = api.expense.get.useQuery(router.query.id);
+  const editExpense = api.expense.update.useMutation({
+    onSuccess: () => {
+      alert("Expense edited!");
+    },
+  });
+
+  const deleteExpense = api.expense.delete.useMutation({
+    onSuccess: () => {
+      alert("Expense deleted!");
+      void router.push("/");
+    },
+  });
+
+  const { data: expense } = api.expense.get.useQuery(
+    stringOrNull(router.query.id) || "",
+    {
+      enabled: !!router.query.id,
+    }
+  );
   if (!expense) return null;
 
   return (
     <Stack spacing="xl" justify="flex-start">
-      <EditExpenseForm expense={expense} />
+      <EditExpenseForm
+        expense={expense}
+        onEdit={(expense) =>
+          editExpense.mutate({
+            id: expense.id,
+            amount: expense.amount,
+            description: expense.description || undefined,
+          })
+        }
+        onDelete={(id) => deleteExpense.mutate(id)}
+      />
       <CancelButton />
     </Stack>
   );
@@ -41,8 +78,10 @@ function CancelButton() {
   );
 }
 
-const EditExpenseForm: React.FC<{ expense: EditExpenseFormValues }> = ({
+const EditExpenseForm: React.FC<EditExpenseProps> = ({
   expense,
+  onEdit,
+  onDelete,
 }) => {
   const form = useForm<EditExpenseFormValues>({
     initialValues: expense,
@@ -51,29 +90,33 @@ const EditExpenseForm: React.FC<{ expense: EditExpenseFormValues }> = ({
     },
   });
 
-  const editExpense = api.expense.update.useMutation({
-    onSuccess: () => {
-      form.reset();
-      alert("Expense edited!");
-    },
-  });
-
   const handleSubmit = (
     values: EditExpenseFormValues,
     event: React.FormEvent<HTMLFormElement>
   ) => {
     event.preventDefault();
-    editExpense.mutate({
+    onEdit({
       id: values.id,
       amount: values.amount,
       description: values.description || undefined,
     });
   };
 
+  const handleDelete = () => {
+    if (confirm("Are you sure you want to delete this expense?")) {
+      onDelete(expense.id);
+    }
+  };
+
   return (
     <form onSubmit={form.onSubmit(handleSubmit)}>
       <Stack spacing="lg">
-        <Title>Edit Expense</Title>
+        <div className="flex flex-row justify-between">
+          <Title>Edit Expense</Title>
+          <Button onClick={handleDelete} variant="outline" color="red">
+            Delete
+          </Button>
+        </div>
         <input type="hidden" {...form.getInputProps("id")} />
         <NumberInput
           label="Amount spent"
