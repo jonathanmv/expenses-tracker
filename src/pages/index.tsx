@@ -1,3 +1,4 @@
+import TodaysBudget from "@/components/budget/TodaysBudget";
 import { api } from "@/utils/api";
 import {
   Affix,
@@ -23,7 +24,8 @@ export default function Home() {
 
 function LoggedInHome() {
   return (
-    <Stack justify="space-between" h="100%">
+    <Stack justify="flex-start" h="100%">
+      <TodaysBudget />
       <ExpensesTimeline />
       <AddExpenseButton />
     </Stack>
